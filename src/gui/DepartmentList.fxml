@@ -24,7 +24,7 @@
       </Label>
       <ToolBar prefHeight="40.0" prefWidth="200.0">
         <items>
-          <Button fx:id="btNew" contentDisplay="TOP" mnemonicParsing="false" text="New" textFill="#f213d0" textOverrun="CLIP" />
+          <Button fx:id="btNew" contentDisplay="TOP" mnemonicParsing="false" onAction="#onBtNewAction" text="New" textFill="#f213d0" textOverrun="CLIP" />
         </items>
       </ToolBar>
       <TableView fx:id="tableViewDepartment" prefHeight="200.0" prefWidth="200.0">
