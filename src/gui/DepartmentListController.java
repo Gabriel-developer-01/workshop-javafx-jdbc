@@ -65,7 +65,5 @@ public class DepartmentListController implements Initializable {
 		List<Department> list = service.findAll();
 		obsList = FXCollections.observableArrayList(list);
 		tableViewDepartment.setItems(obsList);
-		
-		
 	}
 }
