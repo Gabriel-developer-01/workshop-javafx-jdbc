@@ -36,7 +36,7 @@ public class MainViewController implements Initializable {
 
 	@FXML
 	public void onMenuItemDepartmentAction() {
-		loadView("/gui/DepartmentList.fxml", (DepartmentListController controller) -> {
+		loadView("/gui/DepartmentList.fxml", (DepartmentListController controller) -> { // aqui estou passando o objeto para acessar sua classe
 			controller.setDepartmentService(new DepartmentService());
 			controller.updateTableView();
 		});
@@ -51,7 +51,7 @@ public class MainViewController implements Initializable {
 	public void initialize(URL url, ResourceBundle rb) {
 
 	}
-
+	//Usei o Consumer com tipo genérico para passar qualq objeto no parâmetro do método onMenuItemDepartmentAction
 	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
