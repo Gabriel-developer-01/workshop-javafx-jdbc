@@ -65,14 +65,15 @@ public class DepartmentListController implements Initializable {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
 		
-		Stage stage = (Stage) Main.getMainScene().getWindow(); //redimensionar o campo da tableView
-		tableViewDepartment.prefHeightProperty().bind(stage.heightProperty());
+		Stage stage = (Stage) Main.getMainScene().getWindow(); 
+		tableViewDepartment.prefHeightProperty().bind(stage.heightProperty()); //redimensionar o campo da tableView
 	}
 	
-	public void updateTableView() {
+	public void updateTableView() { // atualizar minha tableView com os dados do banco de dados da tabela Department
 		if(service == null) {
 			throw new IllegalStateException("Service was null");
 		}
+		
 		List<Department> list = service.findAll();
 		obsList = FXCollections.observableArrayList(list);
 		tableViewDepartment.setItems(obsList);
@@ -85,7 +86,8 @@ public class DepartmentListController implements Initializable {
 			
 			DepartmentFormController controller = loader.getController();
 			controller.setDepartment(obj);
-			controller.updateFormData();
+			controller.setDepartmentService(new DepartmentService());
+			controller.updateFormData(); // carregar os dados no formulário para a caixa de texto
 			
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Enter Department data");
