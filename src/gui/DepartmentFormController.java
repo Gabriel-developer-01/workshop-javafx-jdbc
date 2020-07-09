@@ -97,7 +97,7 @@ public class DepartmentFormController implements Initializable{
 		
 		obj.setName(txtName.getText());
 		
-		if(exception.getErrors().size() > 0) {
+		if(exception.getErrors().size() > 0) { // se tiver pelo menos um error eu coloco meu exception
 			throw exception;
 		}
 		
