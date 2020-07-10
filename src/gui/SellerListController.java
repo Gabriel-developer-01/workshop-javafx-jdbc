@@ -118,8 +118,7 @@ public class SellerListController implements Initializable, DataChangeListener {
 
 			SellerFormController controller = loader.getController();
 			controller.setSeller(obj);
-			controller.setSellerService(new SellerService()); // carregar os dados salvos no tableview por
-																// injeção de dependência
+			controller.setSellerService(new SellerService()); // carregar os dados salvos no tableview por injeção de dependência
 			controller.subscribeDataChangeListener(this);
 			controller.updateFormData(); // carregar os dados no formulário para a caixa de texto
 
