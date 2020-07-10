@@ -1,0 +1,140 @@
+package gui;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
+
+import db.DbException;
+import gui.listeners.DataChangeListener;
+import gui.util.Alerts;
+import gui.util.Constraints;
+import gui.util.Utils;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import model.entities.Seller;
+import model.exceptions.ValidationException;
+import model.services.SellerService;
+
+public class SellerFormController implements Initializable {
+
+	private Seller entity;
+
+	private SellerService service;
+
+	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
+
+	@FXML
+	private TextField txtId;
+
+	@FXML
+	private TextField txtName;
+
+	@FXML
+	private Label labelErrorName;
+
+	@FXML
+	private Button btSave;
+
+	@FXML
+	private Button btCancel;
+
+	public void setSeller(Seller entity) {
+		this.entity = entity;
+	}
+
+	public void setSellerService(SellerService service) {
+		this.service = service;
+	}
+
+	public void subscribeDataChangeListener(DataChangeListener listener) { // método para adicionar o tableview na lista
+		dataChangeListeners.add(listener);
+	}
+
+	@FXML
+	public void onBtSaveAction(ActionEvent event) {
+		if (entity == null) {
+			throw new IllegalStateException("Entity was null");
+		}
+		if (service == null) {
+			throw new IllegalStateException("Service was null");
+		}
+		try {
+			entity = getFormData();
+			service.saverOrUpdate(entity); // salvando ou atualizando os dados no formulário
+			notifyDataChangeListeners();
+			Utils.currentStage(event).close();
+		} catch (DbException e) {
+			Alerts.showAlert("Error saving object", null, e.getMessage(), AlertType.ERROR);
+		} catch (ValidationException e) {
+			setErrorMessages(e.getErrors());
+		}
+	}
+
+	private void notifyDataChangeListeners() { // método para notificar os novos objetos na tableview
+		for (DataChangeListener listener : dataChangeListeners) {
+			listener.onDataChanged();
+		}
+	}
+
+	private Seller getFormData() { // pegar os dados do formulário
+		Seller obj = new Seller();
+
+		ValidationException exception = new ValidationException("Validation errors");
+
+		obj.setId(Utils.tryParsetoInt(txtId.getText()));
+
+		if (txtName.getText() == null || txtName.getText().trim().equals("")) { // validando o campo "nome" para não
+																				// receber null e nem vazio.
+			exception.addErrors("name", "  Field can't be empty");
+		}
+
+		obj.setName(txtName.getText());
+
+		if (exception.getErrors().size() > 0) { // se tiver pelo menos um error eu coloco meu exception
+			throw exception;
+		}
+
+		return obj;
+	}
+
+	@FXML
+	public void onBtCancelAction(ActionEvent event) {
+		Utils.currentStage(event).close();
+	}
+
+	@Override
+	public void initialize(URL url, ResourceBundle rb) {
+		initializeNodes();
+	}
+
+	private void initializeNodes() {
+		Constraints.setTextFieldInteger(txtId);
+		Constraints.setTextFieldMaxLength(txtName, 30);
+	}
+
+	public void updateFormData() { // colocar os dados do department na caixa de texto
+
+		if (entity == null) {
+			throw new IllegalStateException("Entity was null");
+		}
+
+		txtName.setText(entity.getName());
+		txtId.setText(String.valueOf(entity.getId()));
+	}
+
+	private void setErrorMessages(Map<String, String> errors) {
+		Set<String> fields = errors.keySet();
+
+		if (fields.contains("name")) { // se tiver o error "name" eu seto o meu error para o label
+			labelErrorName.setText(errors.get("name"));
+		}
+	}
+}
